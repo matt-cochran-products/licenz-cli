@@ -1,0 +1,10 @@
+# Distribution artifacts (uploaded to GitHub Releases, not committed)
+dist/
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*~
