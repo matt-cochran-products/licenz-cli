@@ -1,7 +1,7 @@
 # licenz CLI Installer for Windows
 #
 # Quick install:
-#   irm https://raw.githubusercontent.com/matt-cochran/licenz-cli/main/install.ps1 | iex
+#   irm https://raw.githubusercontent.com/matt-cochran-products/licenz-cli/main/install.ps1 | iex
 #
 # Options (via environment variables):
 #   $env:INSTALL_DIR  - Installation directory (default: $env:LOCALAPPDATA\bin)
@@ -12,7 +12,7 @@
 $ErrorActionPreference = "Stop"
 
 # Configuration
-$REPO = "matt-cochran/licenz-cli"
+$REPO = "matt-cochran-products/licenz-cli"
 $BINARY_NAME = "licenz"
 
 # Logging functions
@@ -61,7 +61,7 @@ function Get-Target {
 # Get latest version from GitHub
 function Get-LatestVersion {
     try {
-        $response = Invoke-RestMethod -Uri "https://api.github.com/repos/${REPO}/releases/latest"
+        $response = Invoke-RestMethod -Uri "https://api.github.com/repos/${REPO}/releases/latest" -MaximumRedirection 10
         $version = $response.tag_name -replace '^v', ''
         return $version
     }
@@ -73,16 +73,21 @@ function Get-LatestVersion {
 
         if ($statusCode -eq 404) {
             try {
-                $allReleases = Invoke-RestMethod -Uri "https://api.github.com/repos/${REPO}/releases" -ErrorAction Stop
+                $allReleases = Invoke-RestMethod -Uri "https://api.github.com/repos/${REPO}/releases" -MaximumRedirection 10 -ErrorAction Stop
                 if ($allReleases -and $allReleases.Count -gt 0) {
                     $version = $allReleases[0].tag_name -replace '^v', ''
                     Write-Info "Using latest available release: v${version}"
                     return $version
                 }
+                $noRelease = $true
             }
             catch {
                 return $null
             }
+        }
+
+        if ($noRelease) {
+            Write-Error "no licenz release published yet. See https://github.com/${REPO}/releases, or set `$env:VERSION once one exists."
         }
 
         if ($statusCode -ne 404) {
@@ -101,7 +106,7 @@ function Download-File {
     )
 
     try {
-        Invoke-WebRequest -Uri $Url -OutFile $OutputPath -UseBasicParsing -ErrorAction Stop
+        Invoke-WebRequest -Uri $Url -OutFile $OutputPath -UseBasicParsing -MaximumRedirection 10 -ErrorAction Stop
     }
     catch {
         $statusCode = $null
