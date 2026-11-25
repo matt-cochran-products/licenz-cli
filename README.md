@@ -2,31 +2,31 @@
 
 CLI tool for license generation, verification, and management. Free to use, closed source.
 
-Built on [licenz-core](https://github.com/matt-cochran/licenz) (open source, MIT).
+Built on [licenz-core](https://github.com/matt-cochran-products/licenz) (open source, MIT).
 
 ## Installation
 
 ### macOS / Linux / WSL
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/matt-cochran/licenz-cli/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/matt-cochran-products/licenz-cli/main/install.sh | bash
 ```
 
 ### Windows (PowerShell)
 
 ```powershell
-irm https://raw.githubusercontent.com/matt-cochran/licenz-cli/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/matt-cochran-products/licenz-cli/main/install.ps1 | iex
 ```
 
 ### Windows (CMD)
 
 ```cmd
-curl -fsSL https://raw.githubusercontent.com/matt-cochran/licenz-cli/main/install.cmd -o install.cmd && install.cmd && del install.cmd
+curl -fsSL https://raw.githubusercontent.com/matt-cochran-products/licenz-cli/main/install.cmd -o install.cmd && install.cmd && del install.cmd
 ```
 
 ### Manual Installation
 
-1. Download the appropriate binary from [Releases](https://github.com/matt-cochran/licenz-cli/releases/latest)
+1. Download the appropriate binary from [Releases](https://github.com/matt-cochran-products/licenz-cli/releases/latest)
 2. Extract the archive
 3. Move `licenz` to a directory in your PATH (e.g., `~/.local/bin/`)
 4. Make it executable: `chmod +x ~/.local/bin/licenz`
@@ -76,5 +76,5 @@ rm ~/.local/bin/licenz
 
 ## Related
 
-- [licenz-core](https://github.com/matt-cochran/licenz) - Open-source Rust library for offline license verification
+- [licenz-core](https://github.com/matt-cochran-products/licenz) - Open-source Rust library for offline license verification
 - [licenz.dev](https://licenz.dev) - Managed license management platform

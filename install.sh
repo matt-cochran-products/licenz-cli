@@ -2,7 +2,7 @@
 # licenz CLI Installer
 #
 # Quick install:
-#   curl -fsSL https://raw.githubusercontent.com/matt-cochran/licenz-cli/main/install.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/matt-cochran-products/licenz-cli/main/install.sh | bash
 #
 # Options (via environment variables):
 #   INSTALL_DIR  - Installation directory (default: ~/.local/bin)
@@ -11,7 +11,7 @@
 set -e
 
 # Configuration
-REPO="matt-cochran/licenz-cli"
+REPO="matt-cochran-products/licenz-cli"
 BINARY_NAME="licenz"
 
 # Colors for output
@@ -249,7 +249,7 @@ get_latest_version() {
 
     if command -v curl >/dev/null 2>&1; then
         tmp_file=$(mktemp)
-        http_code=$(curl -sS -w "%{http_code}" -o "$tmp_file" "https://api.github.com/repos/${REPO}/releases/latest" 2>&1)
+        http_code=$(curl -sSL -w "%{http_code}" -o "$tmp_file" "https://api.github.com/repos/${REPO}/releases/latest" 2>&1)
         response=$(cat "$tmp_file" 2>/dev/null || echo "")
         rm -f "$tmp_file"
     elif command -v wget >/dev/null 2>&1; then
@@ -272,7 +272,7 @@ get_latest_version() {
         local all_releases=""
         tmp_file=$(mktemp)
         if command -v curl >/dev/null 2>&1; then
-            all_releases=$(curl -sS "https://api.github.com/repos/${REPO}/releases" 2>/dev/null || echo "")
+            all_releases=$(curl -sSL "https://api.github.com/repos/${REPO}/releases" 2>/dev/null || echo "")
         elif command -v wget >/dev/null 2>&1; then
             wget -q -O "$tmp_file" "https://api.github.com/repos/${REPO}/releases" 2>/dev/null || true
             all_releases=$(cat "$tmp_file" 2>/dev/null || echo "")
@@ -288,7 +288,8 @@ get_latest_version() {
             fi
         fi
 
-        return 1
+        # No release has been published (exit status 2 tells main to say so)
+        return 2
     fi
 
     if [ -n "$http_code" ] && [ "$http_code" != "200" ] && [ "$http_code" != "404" ] && [ "$http_code" != "000" ]; then
@@ -351,7 +352,14 @@ main() {
     info "Detected platform: ${os} (${arch})"
 
     # Get version
-    local version="${VERSION:-$(get_latest_version)}"
+    local version="${VERSION:-}"
+    if [ -z "$version" ]; then
+        local rc=0
+        version=$(get_latest_version) || rc=$?
+        if [ "$rc" -eq 2 ]; then
+            error "no licenz release published yet. See https://github.com/${REPO}/releases, or set the VERSION env var once one exists."
+        fi
+    fi
     if [ -z "$version" ]; then
         error "Failed to determine latest version. Set VERSION env var to install a specific version."
     fi
